@@ -1,0 +1,2 @@
+import type { Country, Mode } from '../../types';
+export function QuestionPanel({mode,country,index,total}:{mode:Mode;country:Country;index:number;total:number}) { const lead=mode==='locator'?'Locate and select':mode==='capital'?'What is the capital of':'Which flag belongs to'; return <section className="question"><div className="eyebrow">QUESTION {index+1} / {total}</div><h2>{lead}</h2><h1>{country.name}</h1>{mode==='locator'&&<p>Rotate the globe and click the country.</p>}</section>}
