@@ -34,3 +34,13 @@ Run the app locally and add product screenshots here before publishing the repos
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Local Development Setup
+
+### Prerequisites
+- Node.js
+- pnpm
+
+### Installation
+
+pnpm install
