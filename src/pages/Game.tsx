@@ -1,14 +1,17 @@
 
-import { useEffect, useMemo, useState } from 'react';
-import { RotateCcw, ZoomIn, Search } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { RotateCcw, ZoomIn, ZoomOut, Search } from 'lucide-react';
+
 import { Earth } from '../components/globe/Earth';
+import type { GlobeControlsHandle } from '../components/globe/GlobeControls';
+
 import { QuestionPanel } from '../components/game/QuestionPanel';
 import { ScoreBoard } from '../components/game/ScoreBoard';
 import { Timer } from '../components/game/Timer';
 import { AnswerOptions } from '../components/game/AnswerOptions';
+
 import { useGameStore } from '../store/gameStore';
 import { pool, question } from '../utils/game';
-import type { Country } from '../types';
 
 export function Game({
   onFinish,
@@ -20,6 +23,8 @@ export function Game({
   }) => void;
 }) {
   const { mode, difficulty, region } = useGameStore();
+
+  const globeRef = useRef<GlobeControlsHandle>(null);
 
   const questions = useMemo(
     () => pool(region, difficulty).slice(0, 10),
@@ -33,7 +38,6 @@ export function Game({
   const [answered, setAnswered] = useState(0);
   const [seconds, setSeconds] = useState(45);
   const [feedback, setFeedback] = useState<string>();
-  const [reset, setReset] = useState(0);
 
   const country = questions[idx];
 
@@ -42,9 +46,10 @@ export function Game({
     : 0;
 
   const q = useMemo(
-    () => country && mode !== 'locator'
-      ? question(country, mode)
-      : undefined,
+    () =>
+      country && mode !== 'locator'
+        ? question(country, mode)
+        : undefined,
     [country, mode]
   );
 
@@ -57,7 +62,7 @@ export function Game({
     if (feedback) return;
 
     const timer = setInterval(() => {
-      setSeconds(s => s <= 1 ? 0 : s - 1);
+      setSeconds(s => (s <= 1 ? 0 : s - 1));
     }, 1000);
 
     return () => clearInterval(timer);
@@ -92,6 +97,7 @@ export function Game({
     if (feedback) return;
 
     setAnswered(a => a + 1);
+
     setFeedback(
       ok
         ? 'Correct — excellent work.'
@@ -118,12 +124,14 @@ export function Game({
     <main className="game">
       <header>
         <span className="brand">GeoSphere</span>
+
         <ScoreBoard
           score={score}
           streak={streak}
           answered={answered}
           correct={correct}
         />
+
         <Timer seconds={seconds} />
       </header>
 
@@ -146,24 +154,39 @@ export function Game({
       <div className="game-layout">
         <div className="globe-wrap">
           <Earth
-            highlight={feedback && mode === 'locator' ? country.id : undefined}
+            ref={globeRef}
+            highlight={
+              feedback && mode === 'locator'
+                ? country.id
+                : undefined
+            }
             onCountry={mode === 'locator' ? selected : undefined}
-            reset={reset}
+            reset={0}
           />
 
           <div className="globe-tools">
             <button
               aria-label="Reset globe"
-              onClick={() => setReset(x => x + 1)}
+              title="Reset globe"
+              onClick={() => globeRef.current?.reset()}
             >
               <RotateCcw />
             </button>
 
             <button
               aria-label="Zoom in"
-              onClick={() => setReset(x => x + 1)}
+              title="Zoom in"
+              onClick={() => globeRef.current?.zoomIn()}
             >
               <ZoomIn />
+            </button>
+
+            <button
+              aria-label="Zoom out"
+              title="Zoom out"
+              onClick={() => globeRef.current?.zoomOut()}
+            >
+              <ZoomOut />
             </button>
           </div>
 
