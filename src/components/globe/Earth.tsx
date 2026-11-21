@@ -28,9 +28,7 @@ export const Earth = forwardRef<GlobeControlsHandle, EarthProps>(
     ) => {
       const p = e.point.clone().normalize();
 
-      const lat = THREE.MathUtils.radToDeg(
-        Math.asin(p.y)
-      );
+      const lat = THREE.MathUtils.radToDeg(Math.asin(p.y));
 
       const lon =
         THREE.MathUtils.radToDeg(
@@ -53,9 +51,7 @@ export const Earth = forwardRef<GlobeControlsHandle, EarthProps>(
     const move = (e: ThreeEvent<PointerEvent>) => {
       const country = getCountry(e);
 
-      setHovered(
-        country ? Number(country.id) : undefined
-      );
+      setHovered(country ? Number(country.id) : undefined);
 
       document.body.style.cursor = country
         ? 'pointer'
@@ -72,14 +68,14 @@ export const Earth = forwardRef<GlobeControlsHandle, EarthProps>(
         camera={{ position: [0, 0, 6], fov: 42 }}
         dpr={[1, 2]}
       >
-        <color attach="background" args={['#071217']} />
+        <color attach="background" args={['#07182B']} />
 
-        <ambientLight intensity={1.4} />
+        <ambientLight intensity={1.5} />
 
         <directionalLight
           position={[-4, 3, 5]}
           intensity={2.2}
-          color="#d9f4e8"
+          color="#EAF6FF"
         />
 
         <Stars
@@ -90,20 +86,22 @@ export const Earth = forwardRef<GlobeControlsHandle, EarthProps>(
           saturation={0}
         />
 
+        {/* Blue ocean surface */}
         <mesh
           onClick={click}
           onPointerMove={move}
           onPointerOut={leave}
         >
-          <sphereGeometry args={[2, 64, 64]} />
+          <sphereGeometry args={[2, 128, 128]} />
 
           <meshStandardMaterial
-            color="#164d5c"
-            roughness={0.74}
-            metalness={0.05}
+            color="#1677D2"
+            roughness={0.7}
+            metalness={0.04}
           />
         </mesh>
 
+        {/* White land, country borders and highlights */}
         <CountryBorders
           highlight={highlight}
           hovered={hovered}
