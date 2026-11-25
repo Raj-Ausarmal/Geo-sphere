@@ -1,7 +1,7 @@
 
 export function Atmosphere() {
   return (
-    <mesh scale={1.07}>
+    <mesh scale={1.07} raycast={() => null}>
       <sphereGeometry args={[2, 48, 48]} />
       <meshBasicMaterial
         color="#69BFFF"

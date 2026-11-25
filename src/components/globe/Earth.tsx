@@ -1,12 +1,12 @@
 
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { Stars } from '@react-three/drei';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useState } from 'react';
 import * as THREE from 'three';
 
-import { CountryBorders } from './CountryBorders';
 import { Atmosphere } from './Atmosphere';
 import { featureAt } from './geo';
+import { createGeoTexture } from './geoTexture';
 
 import {
   GlobeControls,
@@ -22,6 +22,12 @@ type EarthProps = {
 export const Earth = forwardRef<GlobeControlsHandle, EarthProps>(
   function Earth({ highlight, onCountry, reset }, ref) {
     const [hovered, setHovered] = useState<number | undefined>();
+    const geoTexture = useMemo(
+      () => createGeoTexture(highlight ?? hovered),
+      [highlight, hovered]
+    );
+
+    useEffect(() => () => geoTexture.dispose(), [geoTexture]);
 
     const getCountry = (
       e: ThreeEvent<MouseEvent | PointerEvent>
@@ -86,26 +92,19 @@ export const Earth = forwardRef<GlobeControlsHandle, EarthProps>(
           saturation={0}
         />
 
-        {/* Blue ocean surface */}
+        {/* Natural Earth country texture: reliable at all longitudes/seams. */}
         <mesh
           onClick={click}
           onPointerMove={move}
           onPointerOut={leave}
         >
           <sphereGeometry args={[2, 128, 128]} />
-
           <meshStandardMaterial
-            color="#1677D2"
-            roughness={0.7}
-            metalness={0.04}
+            map={geoTexture}
+            roughness={0.76}
+            metalness={0.02}
           />
         </mesh>
-
-        {/* White land, country borders and highlights */}
-        <CountryBorders
-          highlight={highlight}
-          hovered={hovered}
-        />
 
         <Atmosphere />
 
