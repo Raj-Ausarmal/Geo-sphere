@@ -8,8 +8,8 @@ import { features } from './geo';
  * polygons directly onto a sphere, especially around the antimeridian.
  */
 export function createGeoTexture(activeCountryId?: number) {
-  const width = 2048;
-  const height = 1024;
+  const width = 3072;
+  const height = 1536;
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -18,9 +18,9 @@ export function createGeoTexture(activeCountryId?: number) {
   if (!context) throw new Error('Unable to create globe texture canvas.');
 
   const ocean = context.createLinearGradient(0, 0, 0, height);
-  ocean.addColorStop(0, '#0b476b');
-  ocean.addColorStop(0.48, '#126889');
-  ocean.addColorStop(1, '#083451');
+  ocean.addColorStop(0, '#083b5e');
+  ocean.addColorStop(0.48, '#0873a2');
+  ocean.addColorStop(1, '#052945');
   context.fillStyle = ocean;
   context.fillRect(0, 0, width, height);
 
@@ -30,28 +30,20 @@ export function createGeoTexture(activeCountryId?: number) {
     .precision(0.25);
   const path = geoPath(projection, context);
 
-  // SphereGeometry's U coordinates run right-to-left, so mirror the canvas
-  // before drawing. This keeps texture geography aligned with picking/borders.
-  context.save();
-  context.translate(width, 0);
-  context.scale(-1, 1);
-
   for (const country of features) {
     const active = Number(country.id) === activeCountryId;
     context.beginPath();
     path(country as any);
-    context.fillStyle = active ? '#f3c66a' : '#dce8dc';
+    context.fillStyle = active ? '#f3c66a' : '#f1f5ed';
     context.fill();
-    context.strokeStyle = active ? '#fff6b0' : '#5e8391';
-    context.lineWidth = active ? 1.7 : 0.65;
+    context.strokeStyle = active ? '#fff6b0' : '#3c7188';
+    context.lineWidth = active ? 2.1 : 0.85;
     context.stroke();
   }
 
-  context.restore();
-
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 4;
+  texture.anisotropy = 8;
   texture.needsUpdate = true;
   return texture;
 }

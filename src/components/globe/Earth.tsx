@@ -4,7 +4,6 @@ import { Stars } from '@react-three/drei';
 import { forwardRef, useEffect, useMemo, useState } from 'react';
 import * as THREE from 'three';
 
-import { Atmosphere } from './Atmosphere';
 import { featureAt } from './geo';
 import { createGeoTexture } from './geoTexture';
 
@@ -105,8 +104,6 @@ export const Earth = forwardRef<GlobeControlsHandle, EarthProps>(
             metalness={0.02}
           />
         </mesh>
-
-        <Atmosphere />
 
         <GlobeControls
           ref={ref}
