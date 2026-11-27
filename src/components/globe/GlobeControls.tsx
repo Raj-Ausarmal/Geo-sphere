@@ -6,11 +6,14 @@ import {
   useImperativeHandle,
   forwardRef,
 } from 'react';
+import * as THREE from 'three';
+import { lonLatToVector } from './geo';
 
 export type GlobeControlsHandle = {
   zoomIn: () => void;
   zoomOut: () => void;
   reset: () => void;
+  focusOn: (lon: number, lat: number) => void;
 };
 
 type GlobeControlsProps = {
@@ -52,10 +55,27 @@ export const GlobeControls = forwardRef<
     controls.update();
   };
 
+  const focusOn = (lon: number, lat: number) => {
+    if (!ref.current) return;
+
+    const controls = ref.current;
+    const distance = controls.object.position
+      .clone()
+      .sub(controls.target)
+      .length();
+    const position = lonLatToVector(lon, lat, distance);
+
+    controls.target.set(0, 0, 0);
+    controls.object.position.copy(position);
+    controls.object.up.copy(new THREE.Vector3(0, 1, 0));
+    controls.update();
+  };
+
   useImperativeHandle(externalRef, () => ({
     zoomIn: () => zoom(0.85),
     zoomOut: () => zoom(1.18),
     reset: resetGlobe,
+    focusOn,
   }));
 
   useEffect(() => {

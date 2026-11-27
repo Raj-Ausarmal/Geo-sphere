@@ -336,12 +336,58 @@ aside {
   padding-bottom: 8px;
 }
 
+.search-wrapper {
+  position: relative;
+}
+
 .search input {
   border: 0;
   outline: 0;
   background: transparent;
   color: #b7c7c0;
   width: 100%;
+}
+
+.search-results {
+  position: absolute;
+  z-index: 4;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  overflow: hidden;
+  border: 1px solid #3a5551;
+  border-radius: 4px;
+  background: #102326;
+  box-shadow: 0 14px 30px #02090bcc;
+}
+
+.search-results button {
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid #294440;
+  background: transparent;
+  color: #e8f1ea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  font-size: 13px;
+}
+
+.search-results button:last-child {
+  border-bottom: 0;
+}
+
+.search-results button:hover,
+.search-results button:focus-visible {
+  background: #1a3434;
+  outline: none;
+}
+
+.search-results small {
+  color: #91aaa3;
+  font: 10px 'DM Mono';
 }
 
 .answers {
